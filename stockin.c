@@ -4,8 +4,10 @@
 #include "sqlite3.h"
 #include "stockin.h"
 #include "date.h"
+#include "get_item.h"
 
 static int callback(void *data, int argc, char **argv, char **azColName){};
+
 
 void stockIn() {
   system("cls");
@@ -22,7 +24,8 @@ void stockIn() {
   char *zErrMsg = 0;
   char *insert_stock_logs;
   char *update_stock_quantity;
-  const char* status = "STOCK-IN";    
+  const char* status = "STOCK-IN";  
+  char *item;  
     
   char * sql ="SELECT ITEM_NO FROM STOCK_ITEM";
   con = sqlite3_open("inventory.db", &db);
@@ -35,11 +38,13 @@ void stockIn() {
   validate_itemno:
   printf("Input Item No.: ");
   scanf("%d",&itemno);
+  
   do {
     con = sqlite3_step(stmt);
     if (con == SQLITE_ROW) { /* can read data */
       res = sqlite3_column_int(stmt,0);
       if(res==itemno){
+      	getItemDetails(itemno);
         goto validate_quantity;
       } 
     }
@@ -69,15 +74,19 @@ void stockIn() {
     fprintf(stderr, "SQL error: %s\n", zErrMsg);
     sqlite3_free(zErrMsg);
   }else{
-    sqlite3_close(db);
+   // sqlite3_close(db);
   }
 
+  getItemDetails(itemno);
   display:
    printf("\n\nWould you like to stock another item? (Y/N) ");
    scanf(" %c", &choice);
    if(choice == 'y' || choice == 'Y') {
-     stockIn();
+   	 system("cls");
+   	 //printf("%d wahh",itemno);
+     goto validate_quantity;
    } else if (choice == 'n' || choice == 'N') {
+   	 sqlite3_close(db);
      main();
    } else {
      system("cls");
@@ -85,3 +94,5 @@ void stockIn() {
    }
     
 }
+
+

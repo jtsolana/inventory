@@ -8,9 +8,12 @@
 #include "get_quantity.h"
 #include "stockin.h"
 #include "viewstock.h"
+#include "get_item.h"
 
 
 int main(int argc, char* argv[]) {
+//	getItemDetails(1);
+  
   char choice;
   menu:
   system("cls");
@@ -40,7 +43,7 @@ int main(int argc, char* argv[]) {
   default:
       goto menu;
   }
-    
+ 
 }
 
 

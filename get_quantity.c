@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "get_quantity.h"
 #include "sqlite3.h"
 
 int getStockQty(int itemno) {
@@ -32,6 +33,6 @@ int getStockQty(int itemno) {
         stock = sqlite3_column_int (stmt, 0);
     }
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    //sqlite3_close(db);
     return(stock);
 }
