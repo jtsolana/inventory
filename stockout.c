@@ -3,13 +3,14 @@
 #include <string.h>
 #include "sqlite3.h"
 #include "stockin.h"
+#include "stockout.h"
 #include "date.h"
 #include "get_item.h"
 
 static int callback(void *data, int argc, char **argv, char **azColName){};
 
 
-void stockIn() {
+void stockOut() {
   system("cls");
   sqlite3 *db;
   sqlite3_stmt *stmt;
@@ -24,9 +25,8 @@ void stockIn() {
   char *zErrMsg = 0;
   char *insert_stock_logs;
   char *update_stock_quantity;
-  const char* status = "STOCK-IN";  
+  const char* status = "STOCK-OUT";  
   char *item;  
-  char term;
     
   char * sql ="SELECT ITEM_NO FROM STOCK_ITEM";
   con = sqlite3_open("inventory.db", &db);
@@ -38,25 +38,22 @@ void stockIn() {
   
   validate_itemno:
   printf("Input Item No.: ");
-  //scanf("%d",&itemno);
+  scanf("%d",&itemno);
+  
+  do {
+    con = sqlite3_step(stmt);
+    if (con == SQLITE_ROW) { /* can read data */
+      res = sqlite3_column_int(stmt,0);
+      if(res==itemno){
+      	getItemDetails(itemno);
+        goto validate_quantity;
+      } 
+    }
+  } while (con == SQLITE_ROW);
 
-  if(scanf("%d%c", &itemno, &term) != 2 || term != '\n'){
-      printf("Item No. not found in records \n");
-      goto validate_itemno;
-  }else{
-       
-    do {
-      con = sqlite3_step(stmt);
-      if (con == SQLITE_ROW) { /* can read data */
-        res = sqlite3_column_int(stmt,0);
-        if(res==itemno){
-        	getItemDetails(itemno);
-          goto validate_quantity;
-        } 
-      }
-    } while (con == SQLITE_ROW);
-  }
-
+  printf("Item No. not found in records \n");
+  goto validate_itemno;
+  
   validate_quantity: 
   printf("\nInput Quantity: ");
   scanf("%d",&qty);
@@ -70,7 +67,7 @@ void stockIn() {
     fprintf(stdout, "STOCKS SUCCESSFULLY ADDED!");
   }
   stock = getStockQty(itemno);
-  result = stock + qty;
+  result = stock - qty;
   update_stock_quantity = sqlite3_mprintf("UPDATE STOCK_ITEM SET QTY = %d WHERE ITEM_NO = %d ;",result,itemno);  
   /* Execute SQL statement */
   con = sqlite3_exec(db, update_stock_quantity, callback, 0, &zErrMsg);
@@ -97,5 +94,3 @@ void stockIn() {
    }
     
 }
-
-

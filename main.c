@@ -7,12 +7,12 @@
 #include "add_item.h"
 #include "get_quantity.h"
 #include "stockin.h"
+#include "stockout.h"
 #include "viewstock.h"
 #include "get_item.h"
 
 
 int main(int argc, char* argv[]) {
-//	getItemDetails(1);
   
   char choice;
   menu:
@@ -27,7 +27,8 @@ int main(int argc, char* argv[]) {
   printf("[2] View Stocks\n");
   printf("[3] Stock-in\n");
   printf("[4] Stock-out\n");
-  printf("[0] Exit\n\n");
+  printf("[5] View Report\n");
+  printf("[0] Exit Program\n\n");
   printf("Enter Choice: ");
   scanf(" %c", &choice);
   switch (choice) {
@@ -39,6 +40,15 @@ int main(int argc, char* argv[]) {
       break;
     case '3' :
       stockIn();
+      break;
+    case '4' :
+      stockOut();
+      break;
+    case '5' :
+      viewReport();
+      break;
+    case '0' :
+      exit(0);
       break;
   default:
       goto menu;
