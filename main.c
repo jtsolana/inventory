@@ -11,10 +11,18 @@
 #include "viewstock.h"
 #include "get_item.h"
 
+int validate ( char *a ){
+  unsigned x;
+  for ( x = 0; x < strlen ( a ); x++ )
+    if ( !isdigit ( a[x] ) ) return 1;
+  return 0;
+}
+
 
 int main(int argc, char* argv[]) {
   
-  char choice;
+  int i;
+  char buffer[BUFSIZ];
   menu:
   system("cls");
   printf(" ---------------------------------- \n");
@@ -30,24 +38,35 @@ int main(int argc, char* argv[]) {
   printf("[5] View Report\n");
   printf("[0] Exit Program\n\n");
   printf("Enter Choice: ");
-  scanf(" %c", &choice);
-  switch (choice) {
-    case '1' :
+    
+  if ( fgets ( buffer, sizeof buffer, stdin ) != NULL ) {
+    buffer[strlen ( buffer ) - 1] = '\0';
+    if ( validate ( buffer ) == 0 ) {
+      i = atoi ( buffer );
+    } else {
+    	goto menu;
+	} 
+  } else {
+  	goto menu;
+  }
+    
+  switch (i) {
+    case 1 :
       addItem();
       break;
-    case '2' :
+    case 2 :
       viewStocks();
       break;
-    case '3' :
+    case 3 :
       stockIn();
       break;
-    case '4' :
+    case 4 :
       stockOut();
       break;
-    case '5' :
+    case 5 :
       viewReport();
       break;
-    case '0' :
+    case 0 :
       exit(0);
       break;
   default:
